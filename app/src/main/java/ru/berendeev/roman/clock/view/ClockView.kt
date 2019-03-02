@@ -86,8 +86,10 @@ class ClockView : View {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        blackOvalRect.right = w.toFloat()
-        blackOvalRect.bottom = h.toFloat()
+        blackOvalRect.left = paddingLeft.toFloat()
+        blackOvalRect.right = w.toFloat() - paddingRight
+        blackOvalRect.top = paddingTop.toFloat()
+        blackOvalRect.bottom = h.toFloat() - paddingBottom
 
         hourRect.left = 0f
         hourRect.right = hoursLength.toFloat()
@@ -99,8 +101,8 @@ class ClockView : View {
         canvas.drawOval(blackOvalRect, blackPaint)
         canvas.drawOval(transparentOvalRect, transparentPaint)
         (0..12).forEach {
-            val px = width.toFloat() / 2
-            val py = height.toFloat() / 2
+            val px = (paddingLeft + width - paddingRight).toFloat() / 2
+            val py = (paddingTop + height - paddingBottom).toFloat() / 2
             val alpha = PI / 6 * it
             val radius = ovalRadius(alpha)
             val x1 = radius * cos(alpha)
@@ -116,8 +118,8 @@ class ClockView : View {
     }
 
     private fun ovalRadius(alpha: Double): Float {
-        val a = width.toFloat() / 2
-        val b = height.toFloat() / 2
+        val a = (width - paddingLeft - paddingRight).toFloat() / 2
+        val b = (height - paddingTop - paddingBottom).toFloat() / 2
         val ab = a * b
         val a2 = a * a
         val b2 = b * b
