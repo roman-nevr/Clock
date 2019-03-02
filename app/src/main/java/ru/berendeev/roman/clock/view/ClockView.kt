@@ -10,6 +10,8 @@ import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import ru.berendeev.roman.clock.R
+import java.lang.Math.pow
+import kotlin.math.*
 
 private const val CLOCK_STROKE_WIDTH = 4
 class ClockView : View {
@@ -97,10 +99,30 @@ class ClockView : View {
         canvas.drawOval(blackOvalRect, blackPaint)
         canvas.drawOval(transparentOvalRect, transparentPaint)
         (0..12).forEach {
-            canvas.save()
-            canvas.rotate(30f * it, width.toFloat() / 2, height.toFloat() / 2)
-            canvas.drawRect(hourRect, blackPaint)
-            canvas.restore()
+            val px = width.toFloat() / 2
+            val py = height.toFloat() / 2
+            val alpha = PI / 6 * it
+            val radius = ovalRadius(alpha)
+            val x1 = radius * cos(alpha)
+            val y1 = radius * sin(alpha)
+            val x2 = 0.8 * x1
+            val y2 = 0.8 * y1
+            canvas.drawLine(
+                px + x1.toFloat(),
+                py + y1.toFloat(),
+                px + x2.toFloat(),
+                py + y2.toFloat(), blackPaint)
         }
+    }
+
+    private fun ovalRadius(alpha: Double): Float {
+        val a = width.toFloat() / 2
+        val b = height.toFloat() / 2
+        val ab = a * b
+        val a2 = a * a
+        val b2 = b * b
+        val sin2a = pow(sin(alpha), 2.0)
+        val cos2a = pow(cos(alpha), 2.0)
+        return ab / (sqrt(a2 * sin2a + b2 * cos2a)).toFloat()
     }
 }
